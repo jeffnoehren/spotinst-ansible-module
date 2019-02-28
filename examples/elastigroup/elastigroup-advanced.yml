@@ -37,8 +37,6 @@
           product: Linux/UNIX
           user_data: IyEvdXNyL2Jpbi9lbnYgYmFzaA==
           shutdown_script: IyEvdXNyL2Jpbi9lbnYgYmFzaA==
-          preferred_availability_zones:
-            - us-east-2c
           block_device_mappings:
             - device_name: '/dev/xvda'
               ebs:

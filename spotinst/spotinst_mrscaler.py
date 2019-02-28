@@ -190,8 +190,8 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.basic import env_fallback
 
 try:
-    import spotinst_sdk as spotinst
-    from spotinst_sdk import SpotinstClientException
+    import spotinst_sdk2 as spotinst
+    from spotinst_sdk2 import SpotinstClientException
 
     HAS_SPOTINST_SDK = True
 
@@ -213,7 +213,7 @@ def expand_emr_request(module, is_update):
     compute = module.params.get('compute')
     cluster = module.params.get('cluster')
 
-    emr = spotinst.spotinst_emr.EMR()
+    emr = spotinst.models.mrscaler.aws.EMR()
 
     if name is not None:
         emr.name = name
@@ -245,7 +245,7 @@ def expand_emr_request(module, is_update):
 
 # region Strategy
 def expand_strategy(emr, strategy):
-    emr_strategy = spotinst.spotinst_emr.Strategy()
+    emr_strategy = spotinst.models.mrscaler.aws.Strategy()
 
     wrap = strategy.get('wrap')
     clone = strategy.get('clone')
@@ -265,7 +265,7 @@ def expand_strategy(emr, strategy):
 
 
 def expand_wrap(emr_strategy, wrap):
-    emr_wrapping = spotinst.spotinst_emr.Wrapping()
+    emr_wrapping = spotinst.models.mrscaler.aws.Wrapping()
     source_cluster_id = wrap.get('source_cluster_id')
 
     if source_cluster_id is not None:
@@ -275,7 +275,7 @@ def expand_wrap(emr_strategy, wrap):
 
 
 def expand_clone(emr_strategy, clone):
-    emr_cloning = spotinst.spotinst_emr.Cloning()
+    emr_cloning = spotinst.models.mrscaler.aws.Cloning()
 
     origin_cluster_id = clone.get('origin_cluster_id')
     include_steps = clone.get('include_steps')
@@ -292,7 +292,7 @@ def expand_clone(emr_strategy, clone):
 
 
 def expand_new(emr_strategy, new):
-    emr_new = spotinst.spotinst_emr.New()
+    emr_new = spotinst.models.mrscaler.aws.New()
 
     release_label = new.get('release_label')
     number_of_retries = new.get('number_of_retries')
@@ -306,7 +306,7 @@ def expand_new(emr_strategy, new):
 
 
 def expand_provisioning_timeout(emr_strategy, provisioning_timeout):
-    emr_provisioning_timeout = spotinst.spotinst_emr.ProvisioningTimeout()
+    emr_provisioning_timeout = spotinst.models.mrscaler.aws.ProvisioningTimeout()
 
     timeout = provisioning_timeout.get('timeout')
     timeout_action = provisioning_timeout.get('timeout_action')
@@ -322,7 +322,7 @@ def expand_provisioning_timeout(emr_strategy, provisioning_timeout):
 
 # region Compute
 def expand_compute(emr, compute, is_update, do_not_update):
-    emr_compute = spotinst.spotinst_emr.Compute()
+    emr_compute = spotinst.models.mrscaler.aws.Compute()
 
     ebs_root_volume_size = compute.get('ebs_root_volume_size')
     availability_zones = compute.get('availability_zones')
@@ -392,7 +392,7 @@ def expand_compute(emr, compute, is_update, do_not_update):
 
 
 def expand_bootstrap_actions(emr_compute, bootstrap_actions):
-    emr_bootstrap_actions = spotinst.spotinst_emr.BootstrapActions()
+    emr_bootstrap_actions = spotinst.models.mrscaler.aws.BootstrapActions()
     file = bootstrap_actions.get('file')
 
     if file is not None:
@@ -402,7 +402,7 @@ def expand_bootstrap_actions(emr_compute, bootstrap_actions):
 
 
 def expand_steps(emr_compute, steps):
-    emr_steps = spotinst.spotinst_emr.Steps()
+    emr_steps = spotinst.models.mrscaler.aws.Steps()
     file = steps.get('file')
 
     if file is not None:
@@ -413,7 +413,7 @@ def expand_steps(emr_compute, steps):
 
 # region Instance Groups
 def expand_instance_groups(emr_compute, instance_groups, is_update, do_not_update):
-    emr_instance_groups = spotinst.spotinst_emr.InstanceGroups()
+    emr_instance_groups = spotinst.models.mrscaler.aws.InstanceGroups()
 
     master_group = instance_groups.get('master_group')
     core_group = instance_groups.get('core_group')
@@ -439,7 +439,7 @@ def expand_instance_groups(emr_compute, instance_groups, is_update, do_not_updat
 
 
 def expand_master_group(emr_instance_groups, master_group):
-    emr_master_groups = spotinst.spotinst_emr.MasterGroup()
+    emr_master_groups = spotinst.models.mrscaler.aws.MasterGroup()
 
     instance_types = master_group.get('instance_types')
     target = master_group.get('target')
@@ -459,7 +459,7 @@ def expand_master_group(emr_instance_groups, master_group):
 
 
 def expand_core_group(emr_instance_groups, core_group, is_update):
-    emr_core_group = spotinst.spotinst_emr.CoreGroup()
+    emr_core_group = spotinst.models.mrscaler.aws.CoreGroup()
 
     instance_types = core_group.get('instance_types')
     target = core_group.get('target')
@@ -488,7 +488,7 @@ def expand_core_group(emr_instance_groups, core_group, is_update):
 
 
 def expand_task_group(emr_instance_groups, task_group, is_update):
-    emr_task_group = spotinst.spotinst_emr.TaskGroup()
+    emr_task_group = spotinst.models.mrscaler.aws.TaskGroup()
 
     instance_types = task_group.get('instance_types')
     capacity = task_group.get('capacity')
@@ -514,7 +514,7 @@ def expand_task_group(emr_instance_groups, task_group, is_update):
 
 
 def expand_ebs_configuration(schema, ebs_configuration):
-    emr_ebs_configuration = spotinst.spotinst_emr.EbsConfiguration()
+    emr_ebs_configuration = spotinst.models.mrscaler.aws.EbsConfiguration()
 
     ebs_block_device_configs = ebs_configuration.get('ebs_block_device_configs')
     ebs_optimized = ebs_configuration.get('ebs_optimized')
@@ -523,7 +523,7 @@ def expand_ebs_configuration(schema, ebs_configuration):
         emr_block_configs_list = []
 
         for single_ebs_block_config in ebs_block_device_configs:
-            emr_single_ebs_block_config = spotinst.spotinst_emrSingleEbsConfig()
+            emr_single_ebs_block_config = spotinst.models.mrscaler.aws.SingleEbsConfig()
 
             volume_specification = single_ebs_block_config.get('volume_specification')
             volumes_per_instance = single_ebs_block_config.get('volumes_per_instance')
@@ -544,7 +544,7 @@ def expand_ebs_configuration(schema, ebs_configuration):
 
 
 def expand_capacity(schema, capacity):
-    emr_capacity = spotinst.spotinst_emr.Capacity()
+    emr_capacity = spotinst.models.mrscaler.aws.Capacity()
 
     target = capacity.get('target')
     maximum = capacity.get('maximum')
@@ -562,7 +562,7 @@ def expand_capacity(schema, capacity):
 
 
 def expand_configurations(schema, configurations):
-    emr_configurations = spotinst.spotinst_emr.Configurations()
+    emr_configurations = spotinst.models.mrscaler.aws.Configurations()
     file = schema.get('file')
 
     if file is not None:
@@ -575,7 +575,7 @@ def expand_applications(emr_compute, applications):
     application_list = []
 
     for single_application in applications:
-        emr_application = spotinst.spotinst_emr.Application()
+        emr_application = spotinst.models.mrscaler.aws.Application()
 
         name = single_application.get('name')
         args = single_application.get('args')
@@ -594,7 +594,7 @@ def expand_applications(emr_compute, applications):
 
 
 def expand_file(schema, file):
-    emr_file = spotinst.spotinst_emr.File()
+    emr_file = spotinst.models.mrscaler.aws.File()
 
     bucket = file.get('bucket')
     key = file.get('key')
@@ -610,7 +610,7 @@ def expand_file(schema, file):
 
 # region Cluster
 def expand_cluster(emr, cluster, is_update, do_not_update):
-    emr_cluster = spotinst.spotinst_emr.Cluster()
+    emr_cluster = spotinst.models.mrscaler.aws.Cluster()
 
     visible_to_all_users = cluster.get('visible_to_all_users')
     termination_protected = cluster.get('termination_protected')
@@ -654,7 +654,7 @@ def expand_cluster(emr, cluster, is_update, do_not_update):
 
 # region scheduling
 def expand_scheduling(emr, scheduling):
-    emr_scheduing = spotinst.spotinst_emr.Scheduling()
+    emr_scheduing = spotinst.models.mrscaler.aws.Scheduling()
     tasks = scheduling.get('scheduling')
 
     if tasks is not None:
@@ -667,7 +667,7 @@ def expand_tasks(emr_scheduing, tasks):
     task_list = []
 
     for single_task in tasks:
-        task = spotinst.spotinst_emr.Task()
+        task = spotinst.models.mrscaler.aws.Task()
 
         is_enabled = single_task.get('is_enabled')
         instance_group_type = single_task.get('instance_group_type')
@@ -700,7 +700,7 @@ def expand_tasks(emr_scheduing, tasks):
 
 # region Scaling
 def expand_scaling(emr, scaling):
-    emr_scaling = spotinst.spotinst_emr.Scaling()
+    emr_scaling = spotinst.models.mrscaler.aws.Scaling()
 
     up = scaling.get('up')
     down = scaling.get('down')
@@ -717,7 +717,7 @@ def expand_metrics(emr_scaling, metrics, direction):
     metric_list = []
 
     for single_metric in metrics:
-        emr_metric = spotinst.spotinst_emr.Metric()
+        emr_metric = spotinst.models.mrscaler.aws.Metric()
 
         metric_name = single_metric.get('metric_name')
         statistic = single_metric.get('statistic')
@@ -778,7 +778,7 @@ def expand_metrics(emr_scaling, metrics, direction):
 
 
 def expand_action(emr_metric, action):
-    emr_action = spotinst.spotinst_emr.Action()
+    emr_action = spotinst.models.mrscaler.aws.Action()
 
     type_val = action.get('type')
     adjustment = action.get('adjustment')
@@ -807,7 +807,7 @@ def expand_dimensions(emr_metric, dimensions):
     dim_list = []
 
     for single_dim in dimensions:
-        emr_dimension = spotinst.spotinst_emr.Dimension()
+        emr_dimension = spotinst.models.mrscaler.aws.Dimension()
         name = single_dim.get('name')
 
         if name is not None:
@@ -910,10 +910,12 @@ def get_client(module):
     if not account:
         account = creds_file_loaded_vars.get("account")
 
-    client = spotinst.SpotinstClient(auth_token=token, print_output=False)
-
     if account is not None:
-        client = spotinst.SpotinstClient(auth_token=token, account_id=account, print_output=False)
+        session = spotinst.SpotinstSession(auth_token=token, account_id=account)
+    else:
+        session = spotinst.SpotinstSession(auth_token=token)
+
+    client = session.client("mrscaler_aws")
 
     return client
 # endregion

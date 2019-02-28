@@ -1,0 +1,58 @@
+  - hosts: localhost
+    tasks:
+    - name: ShaySeptember20th
+      spotinst_aws_elastigroup:
+         wait_for_instances: True
+         wait_timeout: 1200
+         token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcG90aW5zdCIsImV4cCI6MTgyNDM3NjIxNCwidWlkIjotMSwicm9sZSI6Miwib2lkIjo2MDYwNzk4NjIyNjEsImlhdCI6MTUwOTAxNjIxNH0.ptsB3-cUeIVflzeJnSfJDV2YeDXrPfooJbisFcuGVx0
+         account_id: act-1ec87740
+         uniqueness_by: name
+         name: ShayFebruary20
+         state: present
+         risk: 100
+         availability_vs_cost: balanced
+         revert_to_spot: 
+            perform_at: always
+         availability_zones:
+           - name: us-west-2a
+             subnet_ids:
+               - subnet-865816ff
+         image_id: ami-32d8124a
+         network_interfaces:
+          - associate_public_ip_address: true
+            device_index: 0
+         fallback_to_od: true
+         key_pair: shay-linux-test
+         max_size: 3
+         min_size: 0
+         target: 1
+         unit: instance
+         monitoring: False
+         on_demand_instance_type:  m4.large
+         persistence:
+            should_persist_root_device: false
+            should_persist_block_devices: true
+            should_persist_private_ip: true
+            block_devices_mode: reattach
+         private_ips:
+          - 172.31.122.02
+         product: Linux/UNIX
+         health_check_grace_period: 300
+         draining_timeout: 120
+         roll_config:
+           batch_size_percentage: 50
+           grace_period: 1200
+           health_check_type: TARGET_GROUP
+         security_group_ids:
+           - sg-1a29b065
+           - sg-add663dd
+         spot_instance_types:
+           - m4.xlarge
+           - t2.micro
+         preferred_spot_instance_types:
+            - m4.xlarge   
+         tags:
+           - Environment: temp
+           - Name: temp
+           - Role: temp
+           - T2KMessagingConfig: temp

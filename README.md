@@ -33,14 +33,19 @@ An Ansible Module for creating or deleting Spotinst Elastigroups
 <!--te-->
 
 ## Requirements
-- [spotinst-sdk-python](https://github.com/spotinst/spotinst-sdk-python) >= `v1.0.44`
+- [spotinst-sdk-python](https://github.com/spotinst/spotinst-sdk-python) >= `v2.0.0`
+- [ansible](https://github.com/ansible/ansible/)
 
 ## Installation
 If you'd like to work with this version of the module and not the supplied version that is packaged with Ansible,
 you can copy the module into your Ansible module directory. 
+
+**Note:** to find the local path to you Python packages run `pip show ansible` and it will show the local `Location`
+
 ```bash
 git clone https://github.com/spotinst/spotinst-ansible-module
-cp spotinst-ansible-module/spotinst_aws_elastigroup.py /lib/ansible/modules/cloud/spotinst/spotinst_aws_elastigroup.py
+rm -rf {LOCAL PATH TO PYTHON PACKAGES}/ansible/modules/cloud/spotinst
+cp -r spotinst-ansible-module/spotinst {LOCAL PATH TO PYTHON PACKAGES}/ansible/modules/cloud/spotinst
 ```
 Otherwise the module comes pre-installed with the latest [Ansible](https://github.com/ansible/ansible) release.
 

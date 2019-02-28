@@ -172,8 +172,8 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.basic import env_fallback
 
 try:
-    import spotinst_sdk as spotinst
-    from spotinst_sdk import SpotinstClientException
+    import spotinst_sdk2 as spotinst
+    from spotinst_sdk2 import SpotinstClientException
 
     HAS_SPOTINST_SDK = True
 
@@ -194,7 +194,7 @@ def expand_ocean_request(module, is_update):
     strategy = module.params.get('strategy')
     compute = module.params.get('compute')
 
-    ocean = spotinst.spotinst_ocean.Ocean()
+    ocean = spotinst.models.ocean.aws.Ocean()
 
     if name is not None:
         if is_update:
@@ -247,7 +247,7 @@ def expand_ocean_request(module, is_update):
 
 # region Auto Scaler
 def expand_auto_scaler(ocean, auto_scaler):
-    ocean_auto_scaler = spotinst.spotinst_ocean.AutoScaler()
+    ocean_auto_scaler = spotinst.models.ocean.aws.AutoScaler()
 
     is_enabled = auto_scaler.get('is_enabled')
     cooldown = auto_scaler.get('cooldown')
@@ -273,7 +273,7 @@ def expand_auto_scaler(ocean, auto_scaler):
 
 
 def expand_resource_limits(ocean_auto_scaler, resource_limits):
-    ocean_resource_limits = spotinst.spotinst_ocean.ResourceLimits()
+    ocean_resource_limits = spotinst.models.ocean.aws.ResourceLimits()
 
     max_memory_gib = resource_limits.get('max_memory_gib')
     max_vCpu = resource_limits.get('max_vCpu')
@@ -287,7 +287,7 @@ def expand_resource_limits(ocean_auto_scaler, resource_limits):
 
 
 def expand_down(ocean_auto_scaler, down):
-    ocean_down = spotinst.spotinst_ocean.Down()
+    ocean_down = spotinst.models.ocean.aws.Down()
     evaluation_periods = down.get('evaluation_periods')
 
     if evaluation_periods is not None:
@@ -297,7 +297,7 @@ def expand_down(ocean_auto_scaler, down):
 
 
 def expand_headroom(ocean_auto_scaler, headroom):
-    ocean_headroom = spotinst.spotinst_ocean.Headroom()
+    ocean_headroom = spotinst.models.ocean.aws.Headroom()
 
     cpu_per_unit = headroom.get('cpu_per_unit')
     memory_per_unit = headroom.get('memory_per_unit')
@@ -316,7 +316,7 @@ def expand_headroom(ocean_auto_scaler, headroom):
 
 # region Capacity
 def expand_capacity(ocean, capacity):
-    ocean_capacity = spotinst.spotinst_ocean.Capacity()
+    ocean_capacity = spotinst.models.ocean.aws.Capacity()
 
     minimum = capacity.get('minimum')
     maximum = capacity.get('maximum')
@@ -335,7 +335,7 @@ def expand_capacity(ocean, capacity):
 
 # region Strategy
 def expand_strategy(ocean, strategy):
-    ocean_strategy = spotinst.spotinst_ocean.Strategy()
+    ocean_strategy = spotinst.models.ocean.aws.Strategy()
 
     utilize_reserved_instances = strategy.get('utilize_reserved_instances')
     fallback_to_od = strategy.get('fallback_to_od')
@@ -354,7 +354,7 @@ def expand_strategy(ocean, strategy):
 
 # region Compute
 def expand_compute(ocean, compute):
-    ocean_compute = spotinst.spotinst_ocean.Compute()
+    ocean_compute = spotinst.models.ocean.aws.Compute()
 
     instance_types = compute.get('instance_types')
     subnet_ids = compute.get('subnet_ids')
@@ -371,7 +371,7 @@ def expand_compute(ocean, compute):
 
 
 def expand_instance_types(ocean_compute, instance_types):
-    ocean_instance_types = spotinst.spotinst_ocean.InstanceTypes()
+    ocean_instance_types = spotinst.models.ocean.aws.InstanceTypes()
 
     whitelist = instance_types.get('whitelist')
     blacklist = instance_types.get('blacklist')
@@ -385,7 +385,7 @@ def expand_instance_types(ocean_compute, instance_types):
 
 
 def expand_launch_specification(ocean_compute, launch_specification):
-    ocean_launch_specs = spotinst.spotinst_ocean.LaunchSpecifications()
+    ocean_launch_specs = spotinst.models.ocean.aws.LaunchSpecifications()
 
     security_group_ids = launch_specification.get('security_group_ids')
     image_id = launch_specification.get('image_id')
@@ -416,7 +416,7 @@ def expand_launch_specification(ocean_compute, launch_specification):
 
 
 def expand_iam_instance_profile(ocean_launch_specs, iam_instance_profile):
-    ocean_iam_instance_profile = spotinst.spotinst_ocean.IamInstanceProfile()
+    ocean_iam_instance_profile = spotinst.models.ocean.aws.IamInstanceProfile()
 
     arn = iam_instance_profile.get('arn')
     name = iam_instance_profile.get('name')
@@ -433,7 +433,7 @@ def expand_tags(ocean_launch_specs, tags):
     tag_list = []
 
     for single_tag in tags:
-        tag = spotinst.spotinst_ocean.Tag()
+        tag = spotinst.models.ocean.aws.Tag()
 
         tag_key = single_tag.get('tag_key')
         tag_value = single_tag.get('tag_value')
@@ -540,10 +540,12 @@ def get_client(module):
     if not account:
         account = creds_file_loaded_vars.get("account")
 
-    client = spotinst.SpotinstClient(auth_token=token, print_output=False)
-
     if account is not None:
-        client = spotinst.SpotinstClient(auth_token=token, account_id=account, print_output=False)
+        session = spotinst.SpotinstSession(auth_token=token, account_id=account)
+    else:
+        session = spotinst.SpotinstSession(auth_token=token)
+
+    client = session.client("ocean_aws")
 
     return client
 # endregion

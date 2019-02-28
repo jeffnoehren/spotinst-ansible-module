@@ -20,7 +20,7 @@ description:
     Full documentation available at U(https://help.spotinst.com/hc/en-us/articles/115003530285-Ansible-)
 requirements:
   - python >= 2.7
-  - spotinst_sdk >= 1.0.44
+  - spotinst_sdk2 >= 2.0.0
 options:
 
   id:
@@ -114,8 +114,8 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.basic import env_fallback
 
 try:
-    import spotinst_sdk as spotinst
-    from spotinst_sdk import SpotinstClientException
+    import spotinst_sdk2 as spotinst
+    from spotinst_sdk2 import SpotinstClientException
 
     HAS_SPOTINST_SDK = True
 
@@ -125,7 +125,7 @@ except ImportError:
 
 # region Request Builder Funcitons
 def expand_subscription_request(module):
-    event_subscription = spotinst.spotinst_event_subscription.Subscription()
+    event_subscription = spotinst.models.subscription.Subscription()
 
     resource_id = module.params.get('resource_id')
     protocol = module.params.get('protocol')
@@ -216,10 +216,13 @@ def get_client(module):
     if not account:
         account = creds_file_loaded_vars.get("account")
 
-    client = spotinst.SpotinstClient(auth_token=token, print_output=False)
 
     if account is not None:
-        client = spotinst.SpotinstClient(auth_token=token, account_id=account, print_output=False)
+        session = spotinst.SpotinstSession(auth_token=token, account_id=account)
+    else:
+        session = spotinst.SpotinstSession(auth_token=token)
+
+    client = session.client("subscription")
 
     return client
 # endregion
